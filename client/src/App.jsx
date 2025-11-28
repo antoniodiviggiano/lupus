@@ -11,6 +11,8 @@ function App() {
   const [playerName, setPlayerName] = useState('');
   const [joined, setJoined] = useState(false);
 
+  const [privateMsg, setPrivateMsg] = useState(null);
+
   useEffect(() => {
     socket.connect();
 
@@ -26,14 +28,20 @@ function App() {
       setGameState(value);
     }
 
+    function onPrivateMessage(msg) {
+      setPrivateMsg(msg);
+    }
+
     socket.on('connect', onConnect);
     socket.on('disconnect', onDisconnect);
     socket.on('state_update', onStateUpdate);
+    socket.on('private_message', onPrivateMessage);
 
     return () => {
       socket.off('connect', onConnect);
       socket.off('disconnect', onDisconnect);
       socket.off('state_update', onStateUpdate);
+      socket.off('private_message', onPrivateMessage);
       socket.disconnect();
     };
   }, []);
@@ -80,6 +88,15 @@ function App() {
 
   return (
     <div className="app-container">
+      {privateMsg && (
+        <div className="night-overlay" style={{ pointerEvents: 'auto', background: 'rgba(0,0,0,0.9)' }}>
+          <div className="card" style={{ border: '2px solid #8b0000' }}>
+            <h2>Messaggio Segreto</h2>
+            <p style={{ fontSize: '1.2rem', color: '#d7c49e' }}>{privateMsg}</p>
+            <button onClick={() => setPrivateMsg(null)}>Ho capito</button>
+          </div>
+        </div>
+      )}
       <GamePhase state={gameState} me={gameState.me} />
     </div>
   );

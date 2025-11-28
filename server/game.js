@@ -6,13 +6,14 @@ export class Game {
 
     reset() {
         this.players = {};
-        this.phase = 'LOBBY'; // LOBBY, NIGHT, DAY_DISCUSSION, DAY_VOTING, END
+        this.phase = 'LOBBY'; // LOBBY, NIGHT, DAY_DISCUSSION, DAY_NOMINATION, DAY_DEFENSE, DAY_LYNCHING, END
         this.subPhase = '';
         this.settings = { playerCount: 8 };
         this.nightActions = {};
         this.votes = {};
         this.dayCount = 0;
         this.logs = [];
+        this.nominees = []; // For Day phases
         this.broadcastState();
     }
 
@@ -66,31 +67,33 @@ export class Game {
 
     startGame(settings) {
         const playerIds = Object.keys(this.players);
-        if (playerIds.length < 8) {
-            // For testing, we might allow fewer, but official rules say 8.
-            // We'll proceed for now.
-        }
+        // Official rules say min 8, but we allow dev testing
         this.settings = settings;
         this.assignRoles(playerIds.length);
         this.startNight();
     }
 
     assignRoles(count) {
+        // Base: 2 Wolves, 1 Seer
         let roles = ['WEREWOLF', 'WEREWOLF', 'SEER'];
 
         if (count >= 9) roles.push('MEDIUM');
-        if (count >= 10) roles.push('BODYGUARD');
-        if (count >= 11) roles.push('OWL');
-        if (count >= 12) roles.push('MASON', 'MASON');
-        if (count >= 13) roles.push('WEREHAMSTER');
-        if (count >= 14) roles.push('MYTHOMANIAC');
-        if (count >= 15) roles.push('POSSESSED');
-        if (count >= 16) roles.push('WEREWOLF');
+        if (count >= 10) roles.push('POSSESSED');
+        if (count >= 11) roles.push('BODYGUARD');
+        if (count >= 12) roles.push('OWL');
+        if (count >= 13) roles.push('MASON', 'MASON');
+        if (count >= 15) roles.push('WEREHAMSTER');
+        if (count >= 16) {
+            roles.push('MYTHOMANIAC');
+            roles.push('WEREWOLF'); // 3rd Wolf
+        }
 
+        // Fill rest with Villagers
         while (roles.length < count) {
             roles.push('VILLAGER');
         }
 
+        // Shuffle
         roles = roles.sort(() => Math.random() - 0.5);
 
         const playerIds = Object.keys(this.players);
@@ -103,73 +106,88 @@ export class Game {
         this.phase = 'NIGHT';
         this.dayCount++;
         this.nightActions = {};
-        this.logs.push(`Notte ${this.dayCount} iniziata.`);
+        this.logs.push(`--- Notte ${this.dayCount} ---`);
+
+        // Medium Logic (Start of Night 2+)
+        if (this.dayCount > 1) {
+            const medium = Object.values(this.players).find(p => p.role === 'MEDIUM' && p.isAlive);
+            if (medium && this.lastLynchedRole) {
+                const isWolf = this.lastLynchedRole === 'WEREWOLF';
+                this.io.to(medium.id).emit('private_message', `Il giocatore linciato ERA ${isWolf ? 'un Lupo Mannaro' : 'un Umano'}.`);
+            }
+        }
+
         this.broadcastState();
     }
 
     startDay() {
         this.phase = 'DAY_DISCUSSION';
         this.votes = {};
+        this.nominees = [];
 
         let victims = [];
+        let protectedPlayer = null;
 
-        // Mythomaniac Action (Night 1 only)
-        if (this.dayCount === 1) {
+        // 1. Bodyguard
+        const bgAction = Object.values(this.nightActions).find(a => a.role === 'BODYGUARD');
+        if (bgAction) {
+            protectedPlayer = bgAction.target;
+            this.logs.push("La Guardia del Corpo ha protetto qualcuno.");
+        }
+
+        // 2. Mythomaniac (Night 2 only)
+        if (this.dayCount === 2) {
             const mythAction = Object.values(this.nightActions).find(a => a.role === 'MYTHOMANIAC');
             if (mythAction) {
-                const targetPlayer = this.players[mythAction.target];
-                if (targetPlayer) {
-                    // Simplified: Copy role if Wolf or Seer, else become Villager? 
-                    // Official: If Wolf -> Wolf. If Seer -> Seer. If Witch -> Witch. Else Villager.
-                    // We'll just copy the role for simplicity or map it.
-                    // Let's copy it.
-                    const myId = Object.keys(this.nightActions).find(id => this.nightActions[id] === mythAction);
-                    if (myId) {
-                        this.players[myId].role = targetPlayer.role;
-                        this.logs.push(`Il Mitomane ha cambiato ruolo.`);
+                const target = this.players[mythAction.target];
+                const mythId = Object.keys(this.nightActions).find(id => this.nightActions[id] === mythAction);
+                if (target && mythId) {
+                    if (target.role === 'WEREWOLF' || target.role === 'SEER') {
+                        this.players[mythId].role = target.role;
+                        this.io.to(mythId).emit('private_message', `Hai copiato il ruolo: ${target.role}!`);
+                    } else {
+                        this.io.to(mythId).emit('private_message', `Il bersaglio non era speciale. Rimani Umano.`);
                     }
                 }
             }
         }
 
-        // Werewolves target
+        // 3. Seer (Handle Werehamster death)
+        const seerAction = Object.values(this.nightActions).find(a => a.role === 'SEER');
+        if (seerAction) {
+            const target = this.players[seerAction.target];
+            if (target && target.role === 'WEREHAMSTER') {
+                victims.push(target.id);
+                this.logs.push("Il Criceto Mannaro è morto di paura!");
+            }
+        }
+
+        // 4. Werewolves
         const wolfVotes = Object.values(this.nightActions).filter(a => a.role === 'WEREWOLF').map(a => a.target);
         if (wolfVotes.length > 0) {
             const counts = {};
             wolfVotes.forEach(v => counts[v] = (counts[v] || 0) + 1);
-            const target = Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b);
+            // Simple majority
+            const targetId = Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b);
 
-            // Werehamster immunity
-            if (this.players[target].role !== 'WEREHAMSTER') {
-                victims.push(target);
-            } else {
-                this.logs.push(`I Lupi Mannari hanno attaccato, ma hanno fallito!`);
+            const target = this.players[targetId];
+            if (target) {
+                if (targetId === protectedPlayer) {
+                    this.logs.push("I Lupi hanno attaccato, ma la vittima era protetta!");
+                } else if (target.role === 'WEREHAMSTER') {
+                    this.logs.push("I Lupi hanno attaccato, ma la vittima non è morta!");
+                } else {
+                    victims.push(targetId);
+                }
             }
         }
 
-        // Seer Action (Check for Werehamster death)
-        const seerAction = Object.values(this.nightActions).find(a => a.role === 'SEER');
-        if (seerAction) {
-            const targetPlayer = this.players[seerAction.target];
-            if (targetPlayer && targetPlayer.role === 'WEREHAMSTER') {
-                victims.push(seerAction.target);
-                this.logs.push(`Il Criceto Mannaro è morto di paura!`);
-            }
-        }
-
-        // Bodyguard protection
-        const bgAction = Object.values(this.nightActions).find(a => a.role === 'BODYGUARD');
-        if (bgAction && victims.includes(bgAction.target)) {
-            victims = victims.filter(v => v !== bgAction.target);
-            this.logs.push(`La Guardia del Corpo ha protetto ${this.players[bgAction.target].name}.`);
-        }
-
-        // Kill victims
+        // Apply deaths
         victims.forEach(vid => {
-            if (this.players[vid]) {
+            if (this.players[vid] && this.players[vid].isAlive) {
                 this.players[vid].isAlive = false;
                 this.players[vid].isGhost = true;
-                this.logs.push(`${this.players[vid].name} è stato ucciso durante la notte.`);
+                this.logs.push(`${this.players[vid].name} è stato sbranato.`);
             }
         });
 
@@ -179,28 +197,55 @@ export class Game {
 
     handleAction(socketId, data) {
         const player = this.players[socketId];
-        if (!player || !player.isAlive) return;
+        if (!player) return;
 
-        if (this.phase === 'NIGHT') {
-            if (['WEREWOLF', 'SEER', 'BODYGUARD'].includes(player.role)) {
+        // Night Actions
+        if (this.phase === 'NIGHT' && player.isAlive) {
+            // Check if role can act
+            let canAct = ['WEREWOLF', 'SEER', 'BODYGUARD', 'OWL'].includes(player.role);
+            if (player.role === 'MYTHOMANIAC' && this.dayCount === 2) canAct = true;
+
+            if (canAct) {
                 this.nightActions[socketId] = { role: player.role, target: data.target };
+
+                // Immediate feedback for Seer
+                if (player.role === 'SEER') {
+                    const target = this.players[data.target];
+                    const isWolf = target.role === 'WEREWOLF' || (target.role === 'MYTHOMANIAC' && this.dayCount > 2 && target.role === 'WEREWOLF'); // Mythomaniac check simplified
+                    this.io.to(socketId).emit('private_message', `${target.name} è ${isWolf ? 'un LUPO' : 'NON un Lupo'}.`);
+                }
+
                 this.checkNightEnd();
             }
-            if (player.role === 'MYTHOMANIAC' && this.dayCount === 1) {
-                this.nightActions[socketId] = { role: player.role, target: data.target };
-                this.checkNightEnd();
-            }
-        } else if (this.phase === 'DAY_DISCUSSION') {
+        }
+        // Day - Discussion -> Force Vote
+        else if (this.phase === 'DAY_DISCUSSION') {
             if (data.type === 'FORCE_VOTE') {
-                this.phase = 'DAY_VOTING';
+                this.phase = 'DAY_NOMINATION';
                 this.votes = {};
-                this.logs.push('Votazione iniziata!');
+                this.logs.push('Inizia la fase di Nomina (Indiziati).');
             }
-        } else if (this.phase === 'DAY_VOTING') {
+        }
+        // Day - Nomination (Everyone votes, including Ghosts)
+        else if (this.phase === 'DAY_NOMINATION') {
+            // Ghosts CAN vote here
             this.votes[socketId] = data.target;
-            const livingPlayers = Object.values(this.players).filter(p => p.isAlive);
-            if (Object.keys(this.votes).length >= livingPlayers.length) {
-                this.resolveVoting();
+            const totalVoters = Object.keys(this.players).length; // Everyone
+            if (Object.keys(this.votes).length >= totalVoters) {
+                this.resolveNomination();
+            }
+        }
+        // Day - Lynching (Only Alive, Non-Nominees vote)
+        else if (this.phase === 'DAY_LYNCHING' && player.isAlive) {
+            // Nominees cannot vote? Rules don't explicitly say nominees can't vote in 2nd phase, 
+            // but "Votano solo i giocatori non indiziati e ancora vivi". So YES, nominees excluded.
+            if (this.nominees.includes(socketId)) return;
+
+            this.votes[socketId] = data.target;
+
+            const eligibleVoters = Object.values(this.players).filter(p => p.isAlive && !this.nominees.includes(p.id));
+            if (Object.keys(this.votes).length >= eligibleVoters.length) {
+                this.resolveLynching();
             }
         }
 
@@ -209,59 +254,99 @@ export class Game {
 
     checkNightEnd() {
         const livingPlayers = Object.values(this.players).filter(p => p.isAlive);
+
+        // Define who MUST act
         const wolves = livingPlayers.filter(p => p.role === 'WEREWOLF');
         const seer = livingPlayers.find(p => p.role === 'SEER');
         const bodyguard = livingPlayers.find(p => p.role === 'BODYGUARD');
+        const owl = livingPlayers.find(p => p.role === 'OWL');
         const mythomaniac = livingPlayers.find(p => p.role === 'MYTHOMANIAC');
 
         let ready = true;
 
-        // Wait for all wolves
+        // Wait for all wolves AND check for consensus
         const wolfActions = Object.values(this.nightActions).filter(a => a.role === 'WEREWOLF');
-        if (wolfActions.length < wolves.length) ready = false;
-
-        // Wait for Seer
-        if (seer) {
-            const seerAction = Object.values(this.nightActions).find(a => a.role === 'SEER');
-            if (!seerAction) ready = false;
+        if (wolfActions.length < wolves.length) {
+            ready = false;
+        } else {
+            // All wolves voted, check if they voted for the same target
+            const firstTarget = wolfActions[0].target;
+            const allSame = wolfActions.every(a => a.target === firstTarget);
+            if (!allSame) {
+                ready = false;
+                // Optional: Notify wolves they need to agree?
+                // For now, just wait. The client will allow them to change votes.
+            }
         }
 
-        // Wait for Bodyguard
-        if (bodyguard) {
-            const bgAction = Object.values(this.nightActions).find(a => a.role === 'BODYGUARD');
-            if (!bgAction) ready = false;
-        }
-
-        // Wait for Mythomaniac (Night 1 only)
-        if (this.dayCount === 1 && mythomaniac) {
-            const mythAction = Object.values(this.nightActions).find(a => a.role === 'MYTHOMANIAC');
-            if (!mythAction) ready = false;
-        }
+        if (seer && !this.nightActions[seer.id]) ready = false;
+        if (bodyguard && this.dayCount > 1 && !this.nightActions[bodyguard.id]) ready = false;
+        if (owl && !this.nightActions[owl.id]) ready = false;
+        if (mythomaniac && this.dayCount === 2 && !this.nightActions[mythomaniac.id]) ready = false;
 
         if (ready) {
-            // Add small delay for UX
             setTimeout(() => this.startDay(), 1000);
         }
     }
 
-    resolveVoting() {
-        // Tally votes
+    resolveNomination() {
         const counts = {};
-        Object.values(this.votes).forEach(target => {
-            counts[target] = (counts[target] || 0) + 1;
-        });
+        Object.values(this.votes).forEach(t => counts[t] = (counts[t] || 0) + 1);
 
-        // Find max
-        // ...
-        // Kill player
-        // ...
-        this.phase = 'NIGHT'; // Loop back
-        this.startNight();
+        // Sort by votes
+        const sorted = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
+
+        // Take top 2
+        this.nominees = sorted.slice(0, 2);
+
+        // Owl Logic
+        const owlAction = Object.values(this.nightActions).find(a => a.role === 'OWL');
+        if (owlAction && owlAction.target) {
+            if (!this.nominees.includes(owlAction.target)) {
+                this.nominees.push(owlAction.target);
+                this.logs.push(`Il Gufo ha aggiunto ${this.players[owlAction.target].name} agli indiziati!`);
+            }
+        }
+
+        this.phase = 'DAY_DEFENSE';
+        this.logs.push(`Indiziati: ${this.nominees.map(id => this.players[id].name).join(', ')}. Difendetevi!`);
+
+        // Auto-advance to lynching after short delay or manual? Let's do manual for now via "FORCE_VOTE" equivalent
+        // Actually, let's just wait 5 seconds then go to lynching for flow
+        setTimeout(() => {
+            this.phase = 'DAY_LYNCHING';
+            this.votes = {};
+            this.broadcastState();
+        }, 5000);
+    }
+
+    resolveLynching() {
+        const counts = {};
+        Object.values(this.votes).forEach(t => counts[t] = (counts[t] || 0) + 1);
+
+        // Sort by votes
+        const sorted = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
+        const victimId = sorted[0];
+
+        if (victimId && this.players[victimId]) {
+            this.players[victimId].isAlive = false;
+            this.players[victimId].isGhost = true;
+            this.lastLynchedRole = this.players[victimId].role;
+            this.logs.push(`${this.players[victimId].name} è stato linciato.`);
+        }
+
+        this.checkWinCondition();
+        if (this.phase !== 'END') {
+            this.startNight();
+        }
     }
 
     checkWinCondition() {
         const wolves = Object.values(this.players).filter(p => p.isAlive && p.role === 'WEREWOLF').length;
         const humans = Object.values(this.players).filter(p => p.isAlive && p.role !== 'WEREWOLF').length;
+
+        // Possessed counts as human for calculation but wins with wolves
+        // Werehamster counts as human for calculation
 
         if (wolves === 0) {
             this.phase = 'END';
@@ -274,16 +359,12 @@ export class Game {
 
     getPublicState(socketId) {
         const player = this.players[socketId];
-        // Hide roles of others unless game over
         const safePlayers = Object.values(this.players).map(p => {
             let role = 'UNKNOWN';
             if (socketId === p.id) role = p.role;
             if (this.phase === 'END') role = p.role;
-            // Wolves see each other
             if (player && player.role === 'WEREWOLF' && p.role === 'WEREWOLF') role = 'WEREWOLF';
-            // Masons see each other
             if (player && player.role === 'MASON' && p.role === 'MASON') role = 'MASON';
-            // Spectators see everything
             if (player && player.role === 'SPECTATOR') role = p.role;
 
             return {
@@ -295,11 +376,10 @@ export class Game {
             };
         });
 
-        // Determine my current action/vote for UI highlighting
         let myAction = null;
         if (this.phase === 'NIGHT' && this.nightActions[socketId]) {
             myAction = this.nightActions[socketId].target;
-        } else if (this.phase === 'DAY_VOTING' && this.votes[socketId]) {
+        } else if ((this.phase === 'DAY_NOMINATION' || this.phase === 'DAY_LYNCHING') && this.votes[socketId]) {
             myAction = this.votes[socketId];
         }
 
@@ -309,7 +389,8 @@ export class Game {
             players: safePlayers,
             logs: this.logs,
             winner: this.winner,
-            me: { ...player, myAction } // Include myAction in 'me'
+            nominees: this.nominees,
+            me: { ...player, myAction }
         };
     }
 

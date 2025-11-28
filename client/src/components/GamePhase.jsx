@@ -18,7 +18,7 @@ const ROLE_NAMES = {
 };
 
 export default function GamePhase({ state, me }) {
-    const { phase, players, logs, winner } = state;
+    const { phase, players, logs, winner, nominees } = state;
 
     if (phase === 'LOBBY') {
         return (
@@ -59,7 +59,7 @@ export default function GamePhase({ state, me }) {
     }
 
     const isNight = phase === 'NIGHT';
-    const canWake = ['WEREWOLF', 'SEER', 'BODYGUARD'].includes(me.role) || (me.role === 'MYTHOMANIAC' && state.dayCount === 1);
+    const canWake = ['WEREWOLF', 'SEER', 'BODYGUARD', 'OWL'].includes(me.role) || (me.role === 'MYTHOMANIAC' && state.dayCount === 2);
     const showNightOverlay = isNight && !canWake;
 
     return (
@@ -82,6 +82,23 @@ export default function GamePhase({ state, me }) {
                 <div>{getRoleDescription(me.role)}</div>
             </div>
 
+            {/* Nominees Display */}
+            {nominees && nominees.length > 0 && (
+                <div className="card" style={{ border: '2px solid #8b0000' }}>
+                    <h3>INDIZIATI AL BALLOTTAGGIO</h3>
+                    <div className="player-list" style={{ justifyContent: 'center' }}>
+                        {nominees.map(nid => {
+                            const p = players.find(pl => pl.id === nid);
+                            return p ? (
+                                <div key={p.id} className="player-item" style={{ borderColor: '#8b0000', background: '#3e2723' }}>
+                                    {p.name}
+                                </div>
+                            ) : null;
+                        })}
+                    </div>
+                </div>
+            )}
+
             <div className="card">
                 <ActionArea state={state} me={me} />
             </div>
@@ -95,7 +112,7 @@ export default function GamePhase({ state, me }) {
                 <h3>Giocatori</h3>
                 <div className="player-list">
                     {state.players.map(p => (
-                        <div key={p.id} className={`player - item ${!p.isAlive ? 'dead' : ''} `}>
+                        <div key={p.id} className={`player-item ${!p.isAlive ? 'dead' : ''}`}>
                             {p.name}
                             {p.role !== 'UNKNOWN' ? <div className="role-badge">{ROLE_NAMES[p.role]}</div> : ''}
                         </div>
@@ -110,7 +127,6 @@ function ActionArea({ state, me }) {
     // Local state for countdown
     const [pendingTarget, setPendingTarget] = useState(null);
     const [timeLeft, setTimeLeft] = useState(0);
-    const timerRef = useRef(null);
 
     // Use server-side state for FINAL selection if available
     const confirmedId = me.myAction;
@@ -129,8 +145,7 @@ function ActionArea({ state, me }) {
     }, [timeLeft, pendingTarget]);
 
     const handleAction = (targetId) => {
-        // If already confirmed, maybe allow changing? Yes, restart process.
-        if (targetId === pendingTarget) return; // Already pending this one
+        if (targetId === pendingTarget) return;
 
         // Start countdown
         setPendingTarget(targetId);
@@ -142,101 +157,21 @@ function ActionArea({ state, me }) {
         setTimeLeft(0);
     };
 
-    if (state.phase.startsWith('DAY_VOTING')) {
-        return (
-            <div>
-                <h3>Vota per linciare:</h3>
-                <div className="player-list">
-                    {state.players.filter(p => p.isAlive && p.id !== me.id).map(p => {
-                        const isPending = pendingTarget === p.id;
-                        const isConfirmed = confirmedId === p.id;
-                        return (
-                            <button
-                                key={p.id}
-                                className={`player-item selection-button ${isPending || isConfirmed ? 'selected' : ''}`}
-                                onClick={() => handleAction(p.id)}
-                                disabled={!!confirmedId} // Lock vote after confirmation
-                                style={isConfirmed ? { opacity: 1, borderColor: '#8b0000' } : (confirmedId ? { opacity: 0.5, cursor: 'not-allowed' } : {})}
-                            >
-                                {p.name}
-                                {isPending && (
-                                    <>
-                                        <div className="vote-countdown">Conferma in {timeLeft}...</div>
-                                        <div className="confirm-progress"></div>
-                                    </>
-                                )}
-                            </button>
-                        );
-                    })}
-                </div>
-                {pendingTarget && (
-                    <div style={{ marginTop: 10 }}>
-                        <button onClick={cancelVote} style={{ background: '#333', fontSize: '0.8rem', padding: '5px 10px' }}>
-                            Annulla Selezione
-                        </button>
-                    </div>
-                )}
-                {confirmedId && !pendingTarget && <p style={{ color: '#cd853f', marginTop: 10 }}>Voto confermato.</p>}
-            </div>
-        );
-    }
+    // --- RENDER LOGIC ---
 
     if (!me.isAlive) {
-        return (
-            <div className="dead-view">
-                <div className="dead-text">Sei Morto</div>
-                <p>La tua voce non può più essere udita dai vivi.</p>
-                <p>Osserva nell'ombra...</p>
-            </div>
-        );
-    }
-
-    if (state.phase === 'NIGHT') {
-        const canAct = ['WEREWOLF', 'SEER', 'BODYGUARD'].includes(me.role) || (me.role === 'MYTHOMANIAC' && state.dayCount === 1);
-        if (canAct) {
+        // Ghosts can vote ONLY in NOMINATION phase
+        if (state.phase === 'DAY_NOMINATION') {
+            // Fall through to voting logic below
+        } else {
             return (
-                <div>
-                    <h3>Scegli il tuo bersaglio:</h3>
-                    <div className="player-list">
-                        {state.players.filter(p => {
-                            if (!p.isAlive) return false;
-                            // Prevent Wolf vs Wolf friendly fire
-                            if (me.role === 'WEREWOLF' && p.role === 'WEREWOLF') return false;
-                            return true;
-                        }).map(p => {
-                            const isPending = pendingTarget === p.id;
-                            const isConfirmed = confirmedId === p.id;
-                            return (
-                                <button
-                                    key={p.id}
-                                    className={`player-item selection-button ${isPending || isConfirmed ? 'selected' : ''}`}
-                                    onClick={() => handleAction(p.id)}
-                                    disabled={!!confirmedId} // Lock vote after confirmation
-                                    style={isConfirmed ? { opacity: 1, borderColor: '#8b0000' } : (confirmedId ? { opacity: 0.5, cursor: 'not-allowed' } : {})}
-                                >
-                                    {p.name}
-                                    {isPending && (
-                                        <>
-                                            <div className="vote-countdown">Conferma in {timeLeft}...</div>
-                                            <div className="confirm-progress"></div>
-                                        </>
-                                    )}
-                                </button>
-                            );
-                        })}
-                    </div>
-                    {pendingTarget && (
-                        <div style={{ marginTop: 10 }}>
-                            <button onClick={cancelVote} style={{ background: '#333', fontSize: '0.8rem', padding: '5px 10px' }}>
-                                Annulla Selezione
-                            </button>
-                        </div>
-                    )}
-                    {confirmedId && !pendingTarget && <p style={{ color: '#cd853f', marginTop: 10 }}>Scelta confermata.</p>}
+                <div className="dead-view">
+                    <div className="dead-text">Sei Morto</div>
+                    <p>La tua voce non può più essere udita dai vivi.</p>
+                    <p>Osserva nell'ombra...</p>
                 </div>
             );
         }
-        return <div>Dormi pure...</div>;
     }
 
     if (state.phase === 'DAY_DISCUSSION') {
@@ -245,18 +180,96 @@ function ActionArea({ state, me }) {
                 <p>Discutete su chi è il Lupo Mannaro!</p>
                 <div style={{ display: 'flex', gap: 10, justifyContent: 'center', marginTop: 20 }}>
                     <button onClick={() => socket.emit('action', { type: 'FORCE_VOTE' })} style={{ background: '#8b0000' }}>
-                        INIZIA VOTAZIONE
+                        INIZIA NOMINA
                     </button>
                 </div>
                 <p style={{ fontSize: '0.8rem', opacity: 0.7, marginTop: 10 }}>
-                    (Clicca per passare alla fase di voto)
+                    (Clicca per passare alla fase di Nomina)
                 </p>
             </div>
         );
-
     }
 
-    return <div>Attendi...</div>;
+    if (state.phase === 'DAY_DEFENSE') {
+        return (
+            <div>
+                <h3>Difesa degli Indiziati</h3>
+                <p>Ascoltate le arringhe difensive...</p>
+                <p style={{ fontSize: '0.9rem', opacity: 0.7 }}>La votazione finale inizierà a breve.</p>
+            </div>
+        );
+    }
+
+    // Unified Voting Logic for Day Phases and Night
+    let title = "Fai la tua scelta:";
+    let candidates = [];
+
+    if (state.phase === 'DAY_NOMINATION') {
+        title = "Vota per mandare al ballottaggio:";
+        // Vote for anyone alive except yourself (Rules don't explicitly ban self-nomination but usually discouraged. User asked to ban self-vote).
+        candidates = state.players.filter(p => p.isAlive && p.id !== me.id);
+    } else if (state.phase === 'DAY_LYNCHING') {
+        title = "Vota per linciare:";
+        // Vote ONLY for nominees
+        // Nominees cannot vote? Implemented in server.
+        // If I am a nominee, I see the list but maybe disabled? Server handles it, but let's hide buttons if I can't vote.
+        if (state.nominees.includes(me.id)) {
+            return <div>Sei al ballottaggio. Non puoi votare. Prega.</div>;
+        }
+        candidates = state.players.filter(p => state.nominees.includes(p.id));
+    } else if (state.phase === 'NIGHT') {
+        title = "Scegli il tuo bersaglio:";
+        const canAct = ['WEREWOLF', 'SEER', 'BODYGUARD', 'OWL'].includes(me.role) || (me.role === 'MYTHOMANIAC' && state.dayCount === 2);
+        if (!canAct) return <div>Dormi pure...</div>;
+
+        candidates = state.players.filter(p => {
+            if (!p.isAlive) return false;
+            // Prevent Wolf vs Wolf friendly fire
+            if (me.role === 'WEREWOLF' && p.role === 'WEREWOLF') return false;
+            // Bodyguard cannot choose self
+            if (me.role === 'BODYGUARD' && p.id === me.id) return false;
+            return true;
+        });
+    } else {
+        return <div>Attendi...</div>;
+    }
+
+    return (
+        <div>
+            <h3>{title}</h3>
+            <div className="player-list">
+                {candidates.map(p => {
+                    const isPending = pendingTarget === p.id;
+                    const isConfirmed = confirmedId === p.id;
+                    return (
+                        <button
+                            key={p.id}
+                            className={`player-item selection-button ${isPending || isConfirmed ? 'selected' : ''}`}
+                            onClick={() => handleAction(p.id)}
+                            disabled={state.phase.startsWith('DAY') && !!confirmedId} // Lock vote ONLY in Day phases
+                            style={isConfirmed ? { opacity: 1, borderColor: '#8b0000' } : ((state.phase.startsWith('DAY') && confirmedId) ? { opacity: 0.5, cursor: 'not-allowed' } : {})}
+                        >
+                            {p.name}
+                            {isPending && (
+                                <>
+                                    <div className="vote-countdown">Conferma in {timeLeft}...</div>
+                                    <div className="confirm-progress"></div>
+                                </>
+                            )}
+                        </button>
+                    );
+                })}
+            </div>
+            {pendingTarget && (
+                <div style={{ marginTop: 10 }}>
+                    <button onClick={cancelVote} style={{ background: '#333', fontSize: '0.8rem', padding: '5px 10px' }}>
+                        Annulla Selezione
+                    </button>
+                </div>
+            )}
+            {confirmedId && !pendingTarget && <p style={{ color: '#cd853f', marginTop: 10 }}>Scelta confermata.</p>}
+        </div>
+    );
 }
 
 function getRoleDescription(role) {
@@ -264,13 +277,13 @@ function getRoleDescription(role) {
         case 'WEREWOLF': return 'LUPO MANNARO: Uccidi un villico ogni notte. Non farti scoprire!';
         case 'VILLAGER': return 'VILLICO: Trova i lupi e lincialí.';
         case 'SEER': return 'VEGGENTE: Scopri la vera identità di un giocatore ogni notte.';
-        case 'BODYGUARD': return 'GUARDIA DEL CORPO: Proteggi un giocatore dai lupi ogni notte.';
+        case 'BODYGUARD': return 'GUARDIA DEL CORPO: Proteggi un giocatore dai lupi ogni notte (non te stesso).';
         case 'MEDIUM': return 'MEDIUM: Scopri se il giocatore linciato era un Lupo o no.';
         case 'POSSESSED': return 'INDEMONIATO: Sei umano ma vinci se vincono i Lupi.';
-        case 'OWL': return 'GUFO: Scegli un giocatore da mandare al linciaggio.';
+        case 'OWL': return 'GUFO: Scegli un giocatore da mandare al ballottaggio il giorno dopo.';
         case 'MASON': return 'MASSONE: Conosci l\'identità degli altri Massoni.';
         case 'WEREHAMSTER': return 'CRICETO MANNARO: Muori se il Veggente ti vede. Non puoi essere ucciso dai Lupi.';
-        case 'MYTHOMANIAC': return 'MITOMANE: Assumi il ruolo del giocatore linciato il primo giorno (o copia un ruolo la prima notte).';
+        case 'MYTHOMANIAC': return 'MITOMANE: Alla fine della seconda notte, se scegli un Lupo o Veggente, copi il ruolo.';
         case 'SPECTATOR': return 'SPETTATORE: Osserva la partita in corso. Sei un fantasma silenzioso.';
         default: return 'Aiuta la tua squadra a vincere.';
     }
@@ -281,7 +294,9 @@ function getPhaseName(phase) {
         case 'LOBBY': return 'Lobby';
         case 'NIGHT': return 'Notte';
         case 'DAY_DISCUSSION': return 'Giorno - Discussione';
-        case 'DAY_VOTING': return 'Giorno - Votazione';
+        case 'DAY_NOMINATION': return 'Giorno - Nomina Indiziati';
+        case 'DAY_DEFENSE': return 'Giorno - Difesa';
+        case 'DAY_LYNCHING': return 'Giorno - Linciaggio Finale';
         case 'END': return 'Fine Partita';
         default: return phase;
     }
