@@ -17,13 +17,35 @@ export class Game {
     }
 
     addPlayer(socketId, name) {
+        // Generate random Italian name if none provided
+        const italianNames = [
+            'Mario', 'Luigi', 'Giovanni', 'Francesco', 'Antonio', 'Giuseppe',
+            'Roberto', 'Paolo', 'Stefano', 'Marco', 'Alessandro', 'Lorenzo',
+            'Leonardo', 'Mattia', 'Andrea', 'Maria', 'Anna', 'Sofia',
+            'Giulia', 'Martina', 'Chiara', 'Sara', 'Francesca', 'Elena',
+            'Silvia', 'Alice', 'Giorgia', 'Valentina', 'Laura', 'Aurora',
+            'Dante', 'Beatrice', 'Cesare', 'Lucrezia', 'Niccolò', 'Caterina'
+        ];
+        const randomName = italianNames[Math.floor(Math.random() * italianNames.length)] + ' ' + (Math.floor(Math.random() * 100));
+        const finalName = name || randomName;
+
         if (this.phase !== 'LOBBY') {
-            // Allow reconnection logic here if needed
+            // Join as Spectator
+            this.players[socketId] = {
+                id: socketId,
+                name: finalName + ' (Spettatore)',
+                role: 'SPECTATOR',
+                isAlive: false,
+                isGhost: true,
+                isConnected: true
+            };
+            this.broadcastState();
             return;
         }
+
         this.players[socketId] = {
             id: socketId,
-            name: name || `Player ${Object.keys(this.players).length + 1}`,
+            name: finalName,
             role: null,
             isAlive: true,
             isGhost: false,
@@ -259,6 +281,10 @@ export class Game {
             if (this.phase === 'END') role = p.role;
             // Wolves see each other
             if (player && player.role === 'WEREWOLF' && p.role === 'WEREWOLF') role = 'WEREWOLF';
+            // Masons see each other
+            if (player && player.role === 'MASON' && p.role === 'MASON') role = 'MASON';
+            // Spectators see everything
+            if (player && player.role === 'SPECTATOR') role = p.role;
 
             return {
                 id: p.id,
@@ -269,13 +295,21 @@ export class Game {
             };
         });
 
+        // Determine my current action/vote for UI highlighting
+        let myAction = null;
+        if (this.phase === 'NIGHT' && this.nightActions[socketId]) {
+            myAction = this.nightActions[socketId].target;
+        } else if (this.phase === 'DAY_VOTING' && this.votes[socketId]) {
+            myAction = this.votes[socketId];
+        }
+
         return {
             phase: this.phase,
             dayCount: this.dayCount,
             players: safePlayers,
             logs: this.logs,
             winner: this.winner,
-            me: player
+            me: { ...player, myAction } // Include myAction in 'me'
         };
     }
 

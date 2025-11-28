@@ -55,9 +55,32 @@ function App() {
     return <Lobby onJoin={handleJoin} />;
   }
 
+  if (!gameState || !gameState.me) {
+    return (
+      <div className="app-container">
+        <div className="card">
+          <h2>Caricamento...</h2>
+          <p>Connessione al villaggio in corso...</p>
+          {gameState && gameState.players && (
+            <div style={{ marginTop: 20 }}>
+              <h3>Abitanti del Villaggio ({gameState.players.length}):</h3>
+              <div className="player-list">
+                {gameState.players.map(p => (
+                  <div key={p.id} className="player-item">
+                    {p.name}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="app-container">
-      {gameState && <GamePhase state={gameState} me={gameState.me} />}
+      <GamePhase state={gameState} me={gameState.me} />
     </div>
   );
 }

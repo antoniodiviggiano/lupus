@@ -1,0 +1,333 @@
+# Lupus in Tabula - Regolamento Completo e Dettagliato
+
+## Informazioni Generali
+
+**Lupus in Tabula** è un gioco da 8 a 24 giocatori (età consigliata 8+) in cui gli abitanti del villaggio di Tabula sono afflitti da licantropia. Ogni notte alcuni di loro si trasformano in lupi mannari e sbranano un innocente, mentre di giorno i superstiti discutono e linciano qualcuno sperando sia un lupo mannaro.
+
+## Scopo del Gioco
+
+Il gioco presenta **due fazioni principali**:
+
+**Lupi Mannari**: devono eliminare tutti gli umani
+**Umani**: devono linciare tutti i lupi mannari
+
+## Contenuto della Scatola
+
+- 24 carte personaggio (3 Lupi Mannari, 13 Umani di cui 12 Villici e 1 Veggente, 8 personaggi speciali)
+- 22 carte Fantasma
+- 2 indizi di licantropia (impronta e ciuffo di peli)
+- 24 gettoni voto
+- 1 carta "Benvenuto!" (nell'aldilà)
+- 1 carta riassuntiva
+- 1 carta "Vecchio Saggio" (per variante 8 giocatori)
+
+## Preparazione della Partita
+
+### Scelta del Moderatore
+Un giocatore assume il ruolo di **moderatore**: non appartiene a nessuna fazione e gestisce solo la partita.
+
+### Composizione del Mazzo
+
+**Con 8 giocatori** (escluso moderatore):
+- 5 Villici
+- 2 Lupi Mannari  
+- 1 Veggente
+
+**Con 9 o più giocatori**:
+- Aggiungere carte a sufficienza scegliendo altri Villici e/o personaggi speciali
+
+**Con 16 o più giocatori**:
+- Aggiungere un terzo Lupo Mannaro
+
+Il moderatore mischia i personaggi, guarda ogni carta prima di distribuirla memorizzando chi riceve un lupo mannaro, e consegna una carta coperta a ogni giocatore. Ogni giocatore guarda segretamente la propria carta e la tiene coperta fino alla fine del gioco.
+
+## Struttura del Gioco
+
+Il gioco si divide in **due fasi alternate**: la Notte e il Giorno.
+
+### LA NOTTE
+
+#### Inizio della Notte
+Il moderatore dichiara: "È notte, chiudete tutti gli occhi". Tutti i giocatori chiudono gli occhi e battono ritmicamente una mano sul tavolo per coprire eventuali rumori.
+
+#### Fase del Veggente
+1. Il moderatore chiama: "Il veggente apre gli occhi e sceglie una persona"
+2. Il Veggente apre gli occhi e indica silenziosamente un giocatore
+3. Il moderatore risponde con un cenno del capo affermativo se è un lupo mannaro, negativo altrimenti
+4. Il moderatore chiama: "Il veggente chiude gli occhi"
+
+**Nota importante**: questa fase va giocata anche se il Veggente è morto (è un fantasma), per non dare indizi; in questo caso il moderatore chiama la fase senza che il Veggente risponda.
+
+#### Fase dei Lupi Mannari
+1. Il moderatore chiama: "I lupi mannari aprono gli occhi e scelgono una persona da sbranare"
+2. I Lupi Mannari aprono gli occhi e si riconoscono
+3. Si accordano rapidamente e silenziosamente su chi sbranare, indicandolo con un cenno
+4. Il moderatore prende atto della decisione
+5. Il moderatore chiama: "I lupi mannari chiudono gli occhi"
+
+### IL GIORNO
+
+#### Inizio del Giorno
+1. Il moderatore dichiara: "È giorno, aprite tutti gli occhi"
+2. Il moderatore annuncia chi è stato sbranato
+3. Il giocatore sbranato diventa **Fantasma**: riceve una carta fantasma e il "Benvenuto!", non può più parlare né rivelare il proprio personaggio
+
+#### Discussione
+I giocatori hanno un **massimo di 3 minuti** per discutere e identificare i lupi mannari attraverso ipotesi, deduzioni e contraddizioni. Si può **mentire liberamente**, ma **non si può mai mostrare la propria carta**.
+
+#### Il Linciaggio - Prima Votazione (Scelta degli Indiziati)
+
+1. Il moderatore chiede a ogni giocatore, partendo da sinistra di chi ha il "Benvenuto!" in senso orario, chi secondo lui vada linciato
+2. **Tutti i giocatori, inclusi i fantasmi**, votano mettendo il gettone davanti al giocatore scelto
+3. I **due giocatori con più voti** sono indiziati
+4. **Pareggi**: si sceglie chi è più vicino al giocatore col "Benvenuto!" in senso orario
+5. Il moderatore mette davanti ai due indiziati un indizio di licantropia ciascuno (impronta e ciuffo di peli)
+
+#### Arringa Difensiva
+I due giocatori indiziati possono difendersi con un ultimo breve discorso.
+
+#### Il Linciaggio - Seconda Votazione (Scelta del Linciato)
+
+1. Votano **solo i giocatori non indiziati e ancora vivi** (esclusi quindi gli indiziati e i fantasmi)
+2. La votazione avviene **in segreto e in contemporanea**
+3. I giocatori posano il gettone voto col lato corrispondente all'indizio del giocatore che vogliono linciare verso l'alto, coprendolo con la mano
+4. Al comando del moderatore, i voti vengono rivelati simultaneamente
+5. Chi ha preso più voti è linciato e diventa fantasma
+6. **Pareggio**: viene linciato il più vicino in senso orario a chi ha il "Benvenuto!"
+7. Il giocatore linciato riceve una carta fantasma e non può più parlare né rivelare il proprio personaggio
+
+### REGOLE PER I FANTASMI
+
+I fantasmi (giocatori eliminati):
+- **Non possono rivelare il proprio personaggio**
+- Di notte chiudono gli occhi come tutti
+- Non hanno più alcuna abilità speciale (qualunque fosse il loro personaggio)
+- **Non possono più parlare** per il resto della partita
+- **Possono votare** per scegliere i giocatori indiziati (prima votazione)
+- **Non possono votare** chi deve essere linciato tra gli indiziati (seconda votazione)
+
+## Condizioni di Vittoria
+
+### Vittoria degli Umani
+Il moderatore dichiara la vittoria degli umani se questi **linciano tutti i lupi mannari**.
+
+### Vittoria dei Lupi Mannari  
+I lupi mannari vincono se in un qualunque momento sono **in numero pari agli umani ancora vivi** (es. 2 lupi e 2 umani, oppure 1 e 1). In tal caso i lupi sbranano gli umani rimasti senza complimenti.
+
+**Importante**: è sempre l'intera fazione a vincere, quindi **anche i fantasmi partecipano alla vittoria**.
+
+## Personaggi Base (8 Giocatori)
+
+### Villici (5 carte)
+Umani senza abilità speciali che devono identificare e linciare i lupi mannari.
+
+### Lupi Mannari (2 carte)
+Si riconoscono di notte e scelgono insieme chi sbranare. Devono eliminare tutti gli umani spacciandosi per villici durante il giorno.
+
+### Veggente (1 carta)
+Umano che ogni notte può scoprire se un giocatore è un lupo mannaro o no. Deve indirizzare i sospetti sui lupi senza rivelarsi troppo, altrimenti diventa bersaglio.
+
+## Personaggi Speciali (9+ Giocatori)
+
+Con 9 o più giocatori è possibile introdurre uno o più dei seguenti personaggi speciali. Il numero tra parentesi indica il **numero minimo consigliato di giocatori**.
+
+### Il Medium (9 giocatori)
+- **Fazione**: Umano
+- **Abilità**: All'inizio della notte (dalla seconda in poi), il moderatore chiama la sua fase e con un cenno del capo gli dice "sì" se la persona linciata nel turno precedente era un lupo mannaro, "no" altrimenti
+- **Quando si attiva**: Dalla seconda notte in poi, all'inizio della notte
+
+### L'Indemoniato (10 giocatori)
+- **Fazione**: È un umano ma **parteggia per i lupi mannari**
+- **Particolarità**: Non sa chi siano i lupi mannari
+- **Condizione di vittoria**: Vince se vincono i lupi mannari
+
+### La Guardia del Corpo (11 giocatori)
+- **Fazione**: Umano
+- **Abilità**: Ogni notte (dalla seconda in poi) protegge una persona a sua scelta
+- **Limitazione**: Non può scegliere se stesso
+- **Effetto**: La persona indicata è protetta dai lupi mannari. Se viene scelta anche dai lupi come vittima, non muore e nella notte nessuno è sbranato
+- **Quando si attiva**: Dalla seconda notte in poi, prima della fase dei lupi mannari
+
+### Il Gufo (12 giocatori)
+- **Fazione**: Umano
+- **Abilità**: Durante ogni notte indica una persona
+- **Effetto**: Durante il giorno, dopo che tutti hanno votato per gli indiziati, il moderatore annuncia chi è stato "gufato". Il "gufato" entra di diritto tra i giocatori indiziati, insieme alla prima persona con più voti
+- **Nota**: Se la persona gufata era già indiziata, il voto del Gufo non cambia nulla
+
+**Versione Gufo Letale (20+ giocatori)**:
+- Con 20 o più giocatori, il Gufo diventa **Gufo Letale**
+- Se il giocatore "gufato" durante la notte non era un Mannaro (né Lupo né Criceto), **muore all'inizio del giorno**
+- In questo modo potrebbero essere uccisi due giocatori nella stessa notte
+- Il moderatore decide a quale dei due dare il segnalino "Benvenuto!"
+
+### I Massoni (13 giocatori)
+- **Fazione**: Umani (sempre 2 carte)
+- **Abilità**: Conoscono reciprocamente il ruolo dell'altro
+- **Quando si attiva**: Solo durante la **prima notte**, il moderatore chiama i Massoni che aprono gli occhi e si riconoscono
+- **Importante**: I Massoni vanno aggiunti al mazzo **sempre in coppia**, non singolarmente
+
+### Il Criceto Mannaro (15 giocatori)
+- **Fazione**: Nessuna - **gioca solo per se stesso**
+- **Particolarità**: Ai fini del termine della partita e per il Medium è considerato un umano
+- **Interazione col Veggente**: Se è visto nella notte dal Veggente, **muore insieme allo sbranato**
+- **Immunità**: Non può essere sbranato dai lupi mannari. Se è scelto durante la notte, non è sbranato nessuno
+- **Condizione di vittoria**: Il Criceto Mannaro è l'**unico vincitore** se è ancora vivo quando la partita termina
+
+### Il Mitomane (16 giocatori)
+- **Fazione**: Parte come umano
+- **Abilità**: Alla fine della **seconda notte** gioca una fase speciale in cui ha un'unica occasione di indicare al moderatore un altro giocatore ancora vivo
+- **Caso 1**: Se il giocatore indicato non è né un lupo mannaro né il veggente, il Mitomane resta un umano normale fino al termine della partita
+- **Caso 2**: Se il giocatore indicato è un lupo mannaro o il veggente, il Mitomane **assume immediatamente quel ruolo** a tutti gli effetti
+- **Dopo la trasformazione**: Da questo punto in poi, il Mitomane durante la notte apre gli occhi insieme al personaggio di cui ha copiato l'abilità, e ogni decisione è concordata
+- **Interazione col Veggente**: Il Veggente vede il Mitomane-lupo mannaro come un lupo mannaro
+
+## Ordine delle Fasi Notturne
+
+L'ordine corretto di chiamata durante la notte (con tutti i personaggi speciali) è:
+
+1. **Medium** (dalla seconda notte in poi, all'inizio)
+2. **Veggente**
+3. **Guardia del Corpo** (dalla seconda notte in poi, prima dei lupi)
+4. **Massoni** (solo prima notte)
+5. **Mitomane** (solo alla fine della seconda notte)
+6. **Gufo**
+7. **Lupi Mannari**
+8. **Fantasmi** (solo con variante Minaccia Fantasma, dalla seconda notte)
+
+## Varianti di Gioco
+
+### Variante per 8 Giocatori - Il Vecchio Saggio (Senza Moderatore)
+
+Questa variante permette di giocare **senza moderatore**:
+
+**Setup**:
+- Uno dei giocatori riceve, oltre al personaggio, anche la carta "Vecchio Saggio"
+- I personaggi vanno tenuti coperti il più vicino possibile al centro del tavolo, facilmente raggiungibili da tutti
+
+**Durante la notte**:
+- Il Vecchio Saggio, **senza aprire gli occhi**, chiama le fasi del Veggente e dei Lupi Mannari
+- Per ogni fase conta 10 secondi (es. "Il Veggente apre gli occhi...10...2...1...Il Veggente chiude gli occhi")
+
+**Azioni dei giocatori**:
+- Il Veggente guarda un personaggio (carta) e lo rimette com'era
+- I Lupi Mannari sbranano un personaggio **ruotando di 90 gradi la sua carta**
+
+**Passaggio del Vecchio Saggio**:
+- Alla fine del giorno, il Vecchio Saggio passa al prossimo giocatore in senso orario
+
+### Variante La Minaccia Fantasma
+
+Questa variante introduce i **fantasmi attivi** con simboli di spada e scudo:
+
+**Setup**:
+- Il moderatore assegna il fantasma con la **spada** al primo giocatore eliminato
+- Il fantasma con lo **scudo** va al secondo giocatore eliminato
+- In caso di pareggio nell'ordine di eliminazione, si sorteggia
+
+**Fase dei Fantasmi (dalla seconda notte in poi)**:
+- Alla fine di ciascuna notte, il moderatore chiama la fase dei fantasmi
+- **Tutti i giocatori eliminati** (fantasmi) aprono gli occhi
+- I proprietari di spada e scudo discutono **brevemente e silenziosamente** con gli altri fantasmi
+- Piazzano le proprie carte Fantasma **coperte** davanti a un giocatore ancora vivo (possono scegliere lo stesso giocatore o due diversi)
+
+**Durante la votazione del giorno**:
+- Quando un giocatore con una delle due carte coperte riceve un voto, la carta viene rivelata
+- **Spada**: vale un voto in più che si somma al voto ricevuto
+- **Scudo**: vale un voto in meno che annulla il voto ricevuto
+- I simboli hanno effetto anche sui **pareggi** di tutte le votazioni: il giocatore in parità con la spada viene indiziato/linciato, quello con lo scudo si salva
+
+**Fine del giorno**:
+- Le due carte vengono ridate ai rispettivi proprietari
+
+## Suggerimenti Strategici
+
+### Per gli Umani
+- Cercare di capire chi siano i lupi mannari attraverso deduzioni e contraddizioni
+- Accusare qualcuno di essere un lupo è sospetto, ma non accusare nessuno può esserlo ancora di più
+- Diffidare di giocatori che concordano troppo tra loro
+
+### Per il Veggente
+- Può cercare di indirizzare i sospetti sui lupi che scopre, ma senza rivelarsi troppo
+- Altrimenti i lupi mannari ne faranno un sol boccone
+- Il Veggente può mettersi in evidenza se pensa ne valga la pena
+- Attenzione: anche un lupo mannaro potrebbe spacciarsi per veggente
+
+### Per i Lupi Mannari
+- Hanno interesse a spacciarsi per umani
+- Gettare discredito sugli umani veri
+- Convogliare i sospetti verso altri villici o verso chi si reputa il veggente
+- Concentrarsi sull'eliminare il Veggente prima di altri ruoli cruciali
+- Evitare di uccidere giocatori sospettati di essere lupi per non alzare sospetti
+- Scambiare sguardi e segnali non verbali di notte per accordarsi
+
+## Suggerimenti Pratici per il Moderatore
+
+### Prima Notte Speciale
+Durante la prima notte, per evitare che i lupi scelgano a caso e dare a tutti la possibilità di giocare una giornata intera, è buona prassi che sia **sbranato il moderatore**:
+- I lupi aprono solo gli occhi per riconoscersi
+- Scelgono implicitamente il moderatore come vittima
+- Durante il primo giorno il moderatore annuncia di essere stato lui stesso sbranato
+
+### Comunicazione Neutra
+- Il moderatore dovrebbe porsi al centro del gruppo e parlare sempre verso il centro del tavolo, non in direzione dei giocatori
+- Evitare di usare pronomi come "lui" o "lei" (es. "la veggente" rivela che è una donna)
+- Restare il più generico possibile per non dare involontariamente indizi
+
+### Battere sul Tavolo
+Tutti i giocatori battono ritmicamente **una mano** sul tavolo durante la notte, tenendo l'altra libera per indicare altri giocatori durante le fasi notturne.
+
+### Votazione per Gruppi Numerosi
+Se il gruppo è molto vasto o non si gioca attorno a un tavolo:
+- Durante la votazione per gli indiziati, invece di usare i gettoni, i giocatori votano indicando un altro giocatore
+- I votati segnano i voti ricevuti usando le dita della mano, tenendole visibili a tutti
+- I fantasmi restituiscono il gettone voto
+- La votazione per il linciaggio avviene come di consueto
+- Gli indiziati coprono il gettone con gli indizi per rendere chiaro che non votano
+
+## Combinazioni e Interazioni Speciali tra Personaggi
+
+### Guardia del Corpo + Lupi Mannari
+Se la Guardia del Corpo protegge chi viene scelto dai lupi, **nessuno muore** quella notte.
+
+### Veggente + Criceto Mannaro
+Se il Veggente guarda il Criceto Mannaro, **entrambi muoiono**: il Criceto muore insieme allo sbranato.
+
+### Veggente + Mitomane
+- Se il Mitomane sceglie il Veggente, diventa veggente e da quel momento le decisioni sono concordate
+- Il Veggente originale vede il Mitomane-lupo come un lupo mannaro
+
+### Lupi Mannari + Criceto Mannaro
+Se i lupi scelgono il Criceto Mannaro, **non viene sbranato nessuno** quella notte.
+
+### Medium + Criceto Mannaro
+Il Medium considera il Criceto come un umano ai fini della sua risposta.
+
+### Gufo + Altri Indiziati
+Il gufato entra di diritto tra gli indiziati insieme al primo con più voti. Se era già indiziato, non cambia nulla.
+
+### Gufo Letale + Criceto Mannaro
+Con 20+ giocatori, se il Gufo Letale gufa il Criceto (che non è un Lupo Mannaro), il Criceto muore all'inizio del giorno.
+
+### Indemoniato + Lupi Mannari
+L'Indemoniato non sa chi sono i lupi e loro non sanno chi è lui, ma vince se vincono i lupi. Questo crea situazioni complesse dove l'Indemoniato può essere sbranato dai suoi stessi alleati.
+
+### Massoni + Discussioni Diurne
+I Massoni si conoscono dalla prima notte, creando un blocco di fiducia reciproca che può influenzare le votazioni. Devono però stare attenti a non coordinarsi troppo apertamente per non diventare bersagli.
+
+### Fantasmi + Minaccia Fantasma
+Con la variante attiva, i fantasmi possono influenzare le votazioni attraverso spada (+1 voto) e scudo (-1 voto), risolvendo anche i pareggi.
+
+## Condizioni di Vittoria Speciali
+
+### Criceto Mannaro
+Vince da **solo** se è ancora vivo quando la partita termina (indipendentemente da quale fazione vinca).
+
+### Indemoniato
+Vince con i lupi mannari anche se eliminato, purché i lupi vincano.
+
+### Fantasmi
+Partecipano sempre alla vittoria della loro fazione originale.
+
+---
+
+**Questo regolamento completo copre tutte le regole base, i personaggi speciali ufficiali, le varianti, le combinazioni e le interazioni dettagliate del gioco Lupus in Tabula.**
